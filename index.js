@@ -39,7 +39,7 @@ EventBox.prototype.unbind = function(obj) {
             }
         }
     }
-    
+
 }
 
 EventBox.prototype.off = function(ev, cb) {
@@ -89,9 +89,9 @@ EventBox.prototype.once_c = function(ev, cb) {
     return cancel;
 }
 
-EventBox.prototype.emit = function(ev, arg) {
+EventBox.prototype.emit = function(ev, arg1, arg2) {
 
-    if (arguments.length > 2) {
+    if (arguments.length > 3) {
         return this.emitArray(ev, slice.call(arguments, 1));
     }
 
@@ -101,20 +101,20 @@ EventBox.prototype.emit = function(ev, arg) {
     var lst = hnds[ev];
     if (lst) {
         for (i = lst.length - 2; i >= 0; i -= 2) {
-            lst[i].call(null, arg);
+            lst[i].call(null, arg1, arg2);
         }
     }
 
     lst = hnds['*'];
     if (lst) {
         for (i = lst.length - 2; i >= 0; i -= 2) {
-            lst[i].call(null, ev, arg);
+            lst[i].call(null, ev, arg1, arg2);
         }
     }
 
     var cix = ev.lastIndexOf(':');
     if (cix >= 0) {
-        this.emit(ev.substring(0, cix), arg);
+        this.emit(ev.substring(0, cix), arg1, arg2);
     }
 
 }

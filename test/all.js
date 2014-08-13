@@ -1,6 +1,73 @@
 var EventBox    = require('..'),
     test        = require('tape');
 
+test('valid events', function(a) {
+
+    var em = new EventBox(['foo', 'bar']);
+
+    try {
+        em.on('baz');
+        a.fail();
+    } catch (e) {
+        a.pass();
+    }
+
+    a.end();
+
+});
+
+test('bind', function(a) {
+
+    var em = new EventBox();
+
+    var str = '';
+
+    em.bind({
+        foo: function() { str += 'foo'; },
+        bar: function() { str += 'bar'; },
+        baz: function() { str += 'baz'; }
+    });
+
+    em.emit('foo');
+    em.emit('bar');
+    em.emit('baz');
+
+    a.equal(str, 'foobarbaz');
+
+    a.end();
+
+});
+
+test('unbind', function(a) {
+
+    var em = new EventBox();
+
+    var str = '';
+
+    var obj = {
+        foo: function() { str += 'foo'; },
+        bar: function() { str += 'bar'; },
+        baz: function() { str += 'baz'; }
+    };
+
+    em.bind(obj);
+
+    delete obj.foo;
+    delete obj.bar;
+    delete obj.baz;
+
+    em.unbind(obj);
+
+    em.emit('foo');
+    em.emit('bar');
+    em.emit('baz');
+
+    a.equal(str, '');
+
+    a.end();
+
+});
+
 test('on/emit', function(a) {
 
     var em = new EventBox();

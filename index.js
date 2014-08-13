@@ -2,15 +2,44 @@ module.exports = EventBox;
 
 var slice = Array.prototype.slice;
 
-function remove(ary, item) {
+function _remove(ary, item) {
     var ix;
     if (ary && (ix = ary.indexOf(item)) >= 0) {
-        ary.splice(ix, 1);
+        ary.splice(ix, 2);
     }
 }
 
-function EventBox() {
+function EventBox(validEvents) {
+    this._validEvents = validEvents || null;
     this._eventHandlers = {};
+}
+
+EventBox.prototype.bind = function(obj) {
+    for (var k in obj) {
+        this._on(k, obj, obj[k]);
+    }
+}
+
+EventBox.prototype.unbind = function(obj) {
+
+    var hnd = this._eventHandlers;
+    if (!hnd) {
+        return;
+    }
+
+    for (var k in hnd) {
+        var lst = hnd[k];
+        var i = 1, l = lst.length;
+        while (i < l) {
+            if (lst[i] === obj) {
+                lst.splice(i-1, 2);
+                l -= 2;
+            } else {
+                i += 2;
+            }
+        }
+    }
+    
 }
 
 EventBox.prototype.off = function(ev, cb) {
@@ -22,7 +51,7 @@ EventBox.prototype.off = function(ev, cb) {
 
     if (ev) {
         if (cb) {
-            remove(hnd[ev], cb);
+            _remove(hnd[ev], cb);
         } else {
             hnd[ev] = [];
         }
@@ -33,17 +62,17 @@ EventBox.prototype.off = function(ev, cb) {
 }
 
 EventBox.prototype.on = function(ev, cb) {
-    this._on(ev, cb);
+    this._on(ev, null, cb);
     return cb;
 }
 
 EventBox.prototype.on_c = function(ev, cb) {
-    var lst = this._on(ev, cb);
+    var lst = this._on(ev, null, cb);
 
     var removed = false;
     return function() {
         if (removed) return;
-        remove(lst, cb);
+        _remove(lst, cb);
         removed = true;
     }
 }
@@ -71,14 +100,14 @@ EventBox.prototype.emit = function(ev, arg) {
 
     var lst = hnds[ev];
     if (lst) {
-        for (i = lst.length - 1; i >= 0; --i) {
+        for (i = lst.length - 2; i >= 0; i -= 2) {
             lst[i].call(null, arg);
         }
     }
 
     lst = hnds['*'];
     if (lst) {
-        for (i = lst.length - 1; i >= 0; --i) {
+        for (i = lst.length - 2; i >= 0; i -= 2) {
             lst[i].call(null, ev, arg);
         }
     }
@@ -97,7 +126,7 @@ EventBox.prototype.emitArray = function(ev, args) {
     
     var lst = hnds[ev];
     if (lst) {
-        for (i = lst.length - 1; i >= 0; --i) {
+        for (i = lst.length - 2; i >= 0; i -= 2) {
             lst[i].apply(null, args);
         }
     }
@@ -105,7 +134,7 @@ EventBox.prototype.emitArray = function(ev, args) {
     lst = hnds['*'];
     if (lst) {
         args = [ev].concat(args);
-        for (i = lst.length - 1; i >= 0; --i) {
+        for (i = lst.length - 2; i >= 0; i -= 2) {
             lst[i].apply(null, args);
         }
     }
@@ -148,12 +177,16 @@ EventBox.prototype.emitEvery = function(interval, ev) {
 //
 // Internal
 
-EventBox.prototype._on = function(ev, cb) {
+EventBox.prototype._on = function(ev, userData, cb) {
+
+    if (this._validEvents && this._validEvents.indexOf(ev) < 0) {
+        throw new Error("no such event: " + ev);
+    }
     
     var hnds    = this._eventHandlers || (this._eventHandlers = {}),
         lst     = hnds[ev] || (hnds[ev] = []);
 
-    lst.push(cb);
+    lst.push(cb, userData);
 
     return lst;
 

@@ -39,6 +39,22 @@ test('emit, multiple listeners', function(a) {
 
 });
 
+test('emit, global listener', function(a) {
+
+    var em = new EventBox();
+
+    em.on('*', function(ev, x, y) {
+        a.ok(ev === 'foo')
+        a.ok(x === 1);
+        a.ok(y === 2);
+    });
+
+    em.emit('foo', 1, 2);
+
+    a.end();
+
+});
+
 test('emit array', function(a) {
 
     var em = new EventBox();
@@ -49,6 +65,22 @@ test('emit array', function(a) {
     em.emitArray('foo', [10, 15, 20]);
     
     a.ok(i === 45);
+
+    a.end();
+
+});
+
+test('emit array, global listener', function(a) {
+
+    var em = new EventBox();
+
+    em.on('*', function(ev, x, y) {
+        a.ok(ev === 'foo')
+        a.ok(x === 1);
+        a.ok(y === 2);
+    });
+
+    em.emitArray('foo', [1, 2]);
 
     a.end();
 

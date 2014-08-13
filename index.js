@@ -60,33 +60,32 @@ EventBox.prototype.once_c = function(ev, cb) {
     return cancel;
 }
 
-EventBox.prototype.emit = function(ev) {
+EventBox.prototype.emit = function(ev, arg) {
 
-    var args = null;
+    if (arguments.length > 2) {
+        return this.emitArray(ev, slice.call(arguments, 1));
+    }
 
     var hnds = this._eventHandlers;
     if (!hnds) return;
 
     var lst = hnds[ev];
     if (lst) {
-        if (arguments.length > 1) {
-            args = slice.call(arguments, 1);
-            for (var i = 0, l = lst.length; i < l; ++i) {
-                lst[i].apply(null, args);
-            }
-        } else {
-            for (var i = 0, l = lst.length; i < l; ++i) {
-                lst[i].call(null);
-            }
+        for (i = lst.length - 1; i >= 0; --i) {
+            lst[i].call(null, arg);
+        }
+    }
+
+    lst = hnds['*'];
+    if (lst) {
+        for (i = lst.length - 1; i >= 0; --i) {
+            lst[i].call(null, ev, arg);
         }
     }
 
     var cix = ev.lastIndexOf(':');
     if (cix >= 0) {
-        if (args === null) {
-            args = slice.call(arguments, 1);
-        }
-        this.emitArray(ev.substring(0, cix), args);
+        this.emit(ev.substring(0, cix), arg);
     }
 
 }
@@ -98,7 +97,15 @@ EventBox.prototype.emitArray = function(ev, args) {
     
     var lst = hnds[ev];
     if (lst) {
-        for (var i = 0, l = lst.length; i < l; ++i) {
+        for (i = lst.length - 1; i >= 0; --i) {
+            lst[i].apply(null, args);
+        }
+    }
+
+    lst = hnds['*'];
+    if (lst) {
+        args = [ev].concat(args);
+        for (i = lst.length - 1; i >= 0; --i) {
             lst[i].apply(null, args);
         }
     }

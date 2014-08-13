@@ -124,7 +124,7 @@ EventBox.prototype.emitAfter = function(delay, ev) {
 
 }
 
-EventBox.prototype.emitEvery = function(internval, ev) {
+EventBox.prototype.emitEvery = function(interval, ev) {
 
     var self    = this,
         timer   = null,
@@ -132,7 +132,7 @@ EventBox.prototype.emitEvery = function(internval, ev) {
 
     var timer = setInterval(function() {
         self.emitArray(ev, args);
-    }, delay);
+    }, interval);
 
     return function() { clearInterval(timer); }
 

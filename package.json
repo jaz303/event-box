@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/all.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/jaz303/event-box/issues"
   },
-  "homepage": "https://github.com/jaz303/event-box"
+  "homepage": "https://github.com/jaz303/event-box",
+  "devDependencies": {
+    "tape": "^2.14.0"
+  }
 }

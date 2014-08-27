@@ -38,6 +38,47 @@ test('bind', function(a) {
 
 });
 
+test('bind with specific events', function(a) {
+
+    var em = new EventBox();
+
+    var str = '';
+
+    em.bind({
+        foo: function() { str += 'foo'; },
+        bar: function() { str += 'bar'; },
+        baz: function() { str += 'baz'; }
+    }, ['foo', 'baz']);
+
+    em.emit('foo');
+    em.emit('bar');
+    em.emit('baz');
+
+    a.equal(str, 'foobaz');
+
+    a.end();
+
+});
+
+test('bind context', function(a) {
+
+    var em = new EventBox();
+
+    var str = '';
+
+    em.bind({
+        me: "tarzan",
+        go: function() { str = this.me; }
+    });
+
+    em.emit('go');
+
+    a.equal(str, 'tarzan');
+
+    a.end();
+
+});
+
 test('unbind', function(a) {
 
     var em = new EventBox();
@@ -80,6 +121,24 @@ test('on/emit', function(a) {
     em.emit('foo', 5, 6);
 
     a.ok(i === 21);
+
+    a.end();
+
+});
+
+test('on/emit with context', function(a) {
+
+    var em = new EventBox();
+    var ctx = { a: "quux" };
+    var out;
+
+    em.on('foo', function() {
+        out = this.a;
+    }, ctx);
+
+    em.emit('foo');
+
+    a.ok(out === 'quux');
 
     a.end();
 

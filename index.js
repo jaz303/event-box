@@ -3,10 +3,15 @@ module.exports = EventBox;
 var slice = Array.prototype.slice;
 
 function _remove(ary, item) {
-    var ix;
-    if (ary && (ix = ary.indexOf(item)) >= 0) {
-        ary.splice(ix, 2);
+    if (ary) {
+        for (var ix = 0, len = ary.length; ix < len; ix += 3) {
+            if (ary[ix] === item) {
+                ary.splice(ix, 3);
+                return true;
+            }
+        }
     }
+    return false;
 }
 
 function EventBox(validEvents) {
@@ -14,9 +19,18 @@ function EventBox(validEvents) {
     this._eventHandlers = {};
 }
 
-EventBox.prototype.bind = function(obj) {
-    for (var k in obj) {
-        this._on(k, obj, obj[k]);
+EventBox.prototype.bind = function(obj, events) {
+    if (events) {
+        for (var i = 0; i < events.length; ++i) {
+            this._on(events[i], obj, obj[events[i]], obj);
+        }
+    } else {
+        for (var k in obj) {
+            var handler = obj[k];
+            if (typeof handler === 'function') {
+                this._on(k, obj, handler, obj);    
+            }
+        }
     }
 }
 
@@ -32,10 +46,10 @@ EventBox.prototype.unbind = function(obj) {
         var i = 1, l = lst.length;
         while (i < l) {
             if (lst[i] === obj) {
-                lst.splice(i-1, 2);
-                l -= 2;
+                lst.splice(i-1, 3);
+                l -= 3;
             } else {
-                i += 2;
+                i += 3;
             }
         }
     }
@@ -61,13 +75,13 @@ EventBox.prototype.off = function(ev, cb) {
 
 }
 
-EventBox.prototype.on = function(ev, cb) {
-    this._on(ev, null, cb);
+EventBox.prototype.on = function(ev, cb, ctx) {
+    this._on(ev, null, cb, ctx || null);
     return cb;
 }
 
-EventBox.prototype.on_c = function(ev, cb) {
-    var lst = this._on(ev, null, cb);
+EventBox.prototype.on_c = function(ev, cb, ctx) {
+    var lst = this._on(ev, null, cb, ctx || null);
 
     var removed = false;
     return function() {
@@ -77,14 +91,16 @@ EventBox.prototype.on_c = function(ev, cb) {
     }
 }
 
-EventBox.prototype.once = function(ev, cb) {
-    function inner() { cancel(); cb.apply(null, arguments); }
+EventBox.prototype.once = function(ev, cb, ctx) {
+    ctx = ctx || null;
+    function inner() { cancel(); cb.apply(ctx, arguments); }
     var cancel = this.on_c(ev, inner);
     return inner;
 }
 
-EventBox.prototype.once_c = function(ev, cb) {
-    function inner() { cancel(); cb.apply(null, arguments); }
+EventBox.prototype.once_c = function(ev, cb, ctx) {
+    ctx = ctx || null;
+    function inner() { cancel(); cb.apply(ctx, arguments); }
     var cancel = this.on_c(ev, inner);
     return cancel;
 }
@@ -100,15 +116,15 @@ EventBox.prototype.emit = function(ev, arg1, arg2) {
 
     var lst = hnds[ev];
     if (lst) {
-        for (i = lst.length - 2; i >= 0; i -= 2) {
-            lst[i].call(null, arg1, arg2);
+        for (i = lst.length - 3; i >= 0; i -= 3) {
+            lst[i].call(lst[i+2], arg1, arg2);
         }
     }
 
     lst = hnds['*'];
     if (lst) {
-        for (i = lst.length - 2; i >= 0; i -= 2) {
-            lst[i].call(null, ev, arg1, arg2);
+        for (i = lst.length - 3; i >= 0; i -= 3) {
+            lst[i].call(lst[i+2], ev, arg1, arg2);
         }
     }
 
@@ -126,16 +142,16 @@ EventBox.prototype.emitArray = function(ev, args) {
     
     var lst = hnds[ev];
     if (lst) {
-        for (i = lst.length - 2; i >= 0; i -= 2) {
-            lst[i].apply(null, args);
+        for (i = lst.length - 3; i >= 0; i -= 3) {
+            lst[i].apply(lst[i+2], args);
         }
     }
 
     lst = hnds['*'];
     if (lst) {
         args = [ev].concat(args);
-        for (i = lst.length - 2; i >= 0; i -= 2) {
-            lst[i].apply(null, args);
+        for (i = lst.length - 3; i >= 0; i -= 3) {
+            lst[i].apply(lst[i+2], args);
         }
     }
 
@@ -177,7 +193,7 @@ EventBox.prototype.emitEvery = function(interval, ev) {
 //
 // Internal
 
-EventBox.prototype._on = function(ev, userData, cb) {
+EventBox.prototype._on = function(ev, userData, cb, ctx) {
 
     if (this._validEvents && this._validEvents.indexOf(ev) < 0) {
         throw new Error("no such event: " + ev);
@@ -186,7 +202,7 @@ EventBox.prototype._on = function(ev, userData, cb) {
     var hnds    = this._eventHandlers || (this._eventHandlers = {}),
         lst     = hnds[ev] || (hnds[ev] = []);
 
-    lst.push(cb, userData);
+    lst.push(cb, userData, ctx);
 
     return lst;
 

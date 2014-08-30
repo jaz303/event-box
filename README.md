@@ -32,7 +32,7 @@ As above but instead returns a cancellation function that can be used to remove 
 
 #### `box.once(ev, cb, [ctx])`
 
-Register callback `cb` to be called the next time event `ev` is emitted, using optional `this` context `ctx`. The listener is then automatically removed. Returns a callback that can later be passed `off()` to remove the listener.
+Register callback `cb` to be called the next time event `ev` is emitted, using optional `this` context `ctx`. After being called once the listener is then automatically removed. Returns a callback that can later be passed `off()` to remove the listener.
 
 #### `box.once_c(ev, cb, [ctx])`
 

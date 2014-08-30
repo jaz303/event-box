@@ -50,22 +50,6 @@ Remove all event bindings for event `ev`.
 
 Remove the single binding `cb` for event `ev`.
 
-#### `box.emit(ev, args...)`
-
-Emit event `ev` with event argument specified as successive function arguments.
-
-#### `box.emitArray(ev, args)`
-
-Emit event `ev` with event arguments specified as an array.
-
-#### `box.emitAfter(delay, ev, args...)`
-
-Emit event `ev` after `delay` milliseconds. Event arguments are specified as successive function arguments. Returns a function that can be used to cancel the event emission before it occurs.
-
-#### `box.emitEvery(interval, ev, args...)`
-
-Emit event `ev` every `delay` milliseconds. Event arguments are specified as successive function arguments. Returns a function that can be used to cancel the event emission.
-
 #### `box.bind(obj, [events])`
 
 Bind all functions contained in `obj` as listeners for the events denoted by their respective keys. For example:
@@ -91,6 +75,22 @@ The optional argument `events` can be used to specify the handlers which should 
 #### `box.unbind(obj)`
 
 Unbind all functions previously bound to this `EventBox` via call to `bind()`.
+
+#### `box.emit(ev, args...)`
+
+Emit event `ev` with event arguments specified as successive function arguments.
+
+#### `box.emitArray(ev, args)`
+
+Emit event `ev` with event arguments specified as an array.
+
+#### `box.emitAfter(delay, ev, args...)`
+
+Emit event `ev` after `delay` milliseconds. Event arguments are specified as successive function arguments. Returns a function that can be used to cancel the event emission before it occurs.
+
+#### `box.emitEvery(interval, ev, args...)`
+
+Emit event `ev` every `delay` milliseconds. Event arguments are specified as successive function arguments. Returns a function that can be used to cancel the event emission.
 
 ## Copyright &amp; License
 

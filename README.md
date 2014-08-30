@@ -1,6 +1,10 @@
 # event-box
 
-`event-box` is an alternative to node's built in `EventEmitter`. It is not be a compatible API but it is in a lot of places.
+`event-box` is an alternative to node's built in `EventEmitter`. It exposes a similar API but is not intended to be a drop-in replacement; some differences exist.
+
+## Hierarchical Events
+
+`event-box` supports hierarchical events, using `:` as a separator. If event `foo:bar:baz` is emitted, listeners for `foo:bar:baz`, `foo:bar` and `foo` will all be triggered.
 
 ## Installation
 

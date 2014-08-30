@@ -22,27 +22,49 @@ var EventBox = require('event-box');
 
 Create a new `EventBox`. If `validEvents` is specified an error will be raised whenever an attempt is made to register a listener for an event not included in this array.
 
-#### `box.on(ev, cb, ctx)`
+#### `box.on(ev, cb, [ctx])`
 
-#### `box.on_c(ev, cb, ctx)`
+Register callback `cb` to be called when event `ev` is emitted, using optional `this` context `ctx`. Returns a callback that can later be passed `off()` to remove the listener.
 
-As above but instead returns a cancellation function that can be used to remove the event listener.
-
-#### `box.once(ev, cb, ctx)`
-
-#### `box.once_c(ev, cb, ctx)`
+#### `box.on_c(ev, cb, [ctx])`
 
 As above but instead returns a cancellation function that can be used to remove the event listener.
 
-#### `box.off([ev], [cb])`
+#### `box.once(ev, cb, [ctx])`
+
+Register callback `cb` to be called the next time event `ev` is emitted, using optional `this` context `ctx`. The listener is then automatically removed. Returns a callback that can later be passed `off()` to remove the listener.
+
+#### `box.once_c(ev, cb, [ctx])`
+
+As above but instead returns a cancellation function that can be used to remove the event listener.
+
+#### `box.off()`
+
+Remove all event bindings.
+
+#### `box.off(ev)`
+
+Remove all event bindings for event `ev`.
+
+#### `box.off(ev, cb)`
+
+Remove the single binding `cb` for event `ev`.
 
 #### `box.emit(ev, args...)`
 
+Emit event `ev` with event argument specified as successive function arguments.
+
 #### `box.emitArray(ev, args)`
+
+Emit event `ev` with event arguments specified as an array.
 
 #### `box.emitAfter(delay, ev, args...)`
 
+Emit event `ev` after `delay` milliseconds. Event arguments are specified as successive function arguments. Returns a function that can be used to cancel the event emission before it occurs.
+
 #### `box.emitEvery(interval, ev, args...)`
+
+Emit event `ev` every `delay` milliseconds. Event arguments are specified as successive function arguments. Returns a function that can be used to cancel the event emission.
 
 #### `box.bind(obj, [events])`
 
@@ -58,7 +80,6 @@ box.bind({
 is equivalent to:
 
 ```javascript
-var obj = 
 box.on('foo', doFoo, obj);
 box.on('bar', doBar, obj);
 ```
@@ -70,3 +91,9 @@ The optional argument `events` can be used to specify the handlers which should 
 #### `box.unbind(obj)`
 
 Unbind all functions previously bound to this `EventBox` via call to `bind()`.
+
+## Copyright &amp; License
+
+&copy; 2014 Jason Frame [ [@jaz303](http://twitter.com/jaz303) / [jason@onehackoranother.com](mailto:jason@onehackoranother.com) ]
+
+Released under the ISC license.

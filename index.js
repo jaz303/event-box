@@ -114,6 +114,8 @@ EventBox.prototype.emit = function(ev, arg1, arg2) {
     var hnds = this._eventHandlers;
     if (!hnds) return;
 
+    var i;
+
     var lst = hnds[ev];
     if (lst) {
         for (i = lst.length - 3; i >= 0; i -= 3) {
@@ -139,6 +141,8 @@ EventBox.prototype.emitArray = function(ev, args) {
 
     var hnds = this._eventHandlers;
     if (!hnds) return;
+
+    var i;
     
     var lst = hnds[ev];
     if (lst) {

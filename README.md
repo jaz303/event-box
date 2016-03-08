@@ -22,9 +22,15 @@ var EventBox = require('event-box');
 
 ## API
 
-#### `var box = new EventBox([validEvents])`
+### Creation
 
-Create a new `EventBox`. If `validEvents` is specified an error will be raised whenever an attempt is made to register a listener for an event not included in this array.
+#### `var box = new EventBox()`
+
+Create a new `EventBox`.
+
+#### `util.inherits(MyConstructor, EventBox)`
+
+It's also possible for your own constructors to inherit from `EventBox`.
 
 #### `box.on(ev, cb, [ctx])`
 

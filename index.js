@@ -33,6 +33,17 @@ EventBox.prototype.bind = function(obj, events) {
     }
 }
 
+EventBox.prototype.bind_c = function(obj, events) {
+    this.bind(obj, events);
+    var removed = false, self = this;
+    return function() {
+        if (removed) return;
+        removed = true;
+        self.unbind(obj);
+        self = obj = events = null;
+    }
+}
+
 EventBox.prototype.unbind = function(obj) {
 
     var hnd = this._eventHandlers;

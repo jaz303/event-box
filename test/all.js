@@ -71,6 +71,31 @@ test('bind context', function(a) {
 
 });
 
+test('bind_c', function(a) {
+
+    var em = createEventBox();
+
+    var x = 0;
+
+    var cancel = em.bind_c({
+        foo: function() { x += 1; },
+        bar: function() { x += 2; }
+    });
+
+    em.emit('foo');
+    em.emit('bar');
+
+    cancel();
+
+    em.emit('foo');
+    em.emit('bar');
+
+    a.equal(x, 3);
+
+    a.end();
+
+});
+
 test('unbind', function(a) {
 
     var em = createEventBox();

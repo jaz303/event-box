@@ -76,6 +76,10 @@ Attached functions will be called in the context of the bound object.
 
 The optional argument `events` can be used to specify the handlers which should be plucked from the supplied object, otherwise all functions found in the object will be attached.
 
+#### `box.bind_c(obj, [events])`
+
+As above but returns a cancellation function that can be used to remove the object binding.
+
 #### `box.unbind(obj)`
 
 Unbind all functions previously bound to this `EventBox` via call to `bind()`.

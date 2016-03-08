@@ -1,24 +1,16 @@
 var EventBox    = require('..'),
-    test        = require('tape');
+    test        = require('tape'),
+    util        = require('util');
 
-test('valid events', function(a) {
-
-    var em = new EventBox(['foo', 'bar']);
-
-    try {
-        em.on('baz');
-        a.fail();
-    } catch (e) {
-        a.pass();
-    }
-
-    a.end();
-
-});
+function createEventBox(arg) {
+    var eb = function() {};
+    util.inherits(eb, EventBox);
+    return new eb(arg);
+}
 
 test('bind', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var str = '';
 
@@ -40,7 +32,7 @@ test('bind', function(a) {
 
 test('bind with specific events', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var str = '';
 
@@ -62,7 +54,7 @@ test('bind with specific events', function(a) {
 
 test('bind context', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var str = '';
 
@@ -81,7 +73,7 @@ test('bind context', function(a) {
 
 test('unbind', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var str = '';
 
@@ -111,7 +103,7 @@ test('unbind', function(a) {
 
 test('on/emit', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     em.on('foo', function(v1, v2) { i += (v1 + v2); });
@@ -128,7 +120,7 @@ test('on/emit', function(a) {
 
 test('on/emit with context', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
     var ctx = { a: "quux" };
     var out;
 
@@ -146,7 +138,7 @@ test('on/emit with context', function(a) {
 
 test('emit, multiple listeners', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var x = 0, y = 0, z = 0;
 
@@ -167,7 +159,7 @@ test('emit, multiple listeners', function(a) {
 
 test('emit, global listener', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     em.on('*', function(ev, x, y) {
         a.ok(ev === 'foo')
@@ -183,7 +175,7 @@ test('emit, global listener', function(a) {
 
 test('emit array', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     em.on('foo', function(a, b, c) { i = a + b + c; });
@@ -198,7 +190,7 @@ test('emit array', function(a) {
 
 test('emit array, global listener', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     em.on('*', function(ev, x, y) {
         a.ok(ev === 'foo')
@@ -214,7 +206,7 @@ test('emit array, global listener', function(a) {
 
 test('emit namespaced', function(t) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var str = '';
 
@@ -233,7 +225,7 @@ test('emit namespaced', function(t) {
 
 test('on_c, cancellation', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     function cb() { i++; }
@@ -256,7 +248,7 @@ test('on_c, cancellation', function(a) {
 
 test('once', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     em.once('foo', function(val) { i += val; });
@@ -273,7 +265,7 @@ test('once', function(a) {
 
 test('once, pre-off', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     var cb = em.once('foo', function(val) { i += val; });
@@ -292,7 +284,7 @@ test('once, pre-off', function(a) {
 
 test('once, cancellation', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     em.once_c('foo', function(val) { i += val; });
@@ -309,7 +301,7 @@ test('once, cancellation', function(a) {
 
 test('once, cancellation, pre-cancelled', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     var cancel = em.once_c('foo', function(val) { i += val; });
@@ -328,7 +320,7 @@ test('once, cancellation, pre-cancelled', function(a) {
 
 test('off - single callback', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var i = 0;
     function cb() { i++; }
@@ -351,7 +343,7 @@ test('off - single callback', function(a) {
 
 test('off - single event', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var x = 0;
 
@@ -374,7 +366,7 @@ test('off - single event', function(a) {
 
 test('off - all events', function(a) {
 
-    var em = new EventBox();
+    var em = createEventBox();
 
     var x = 0;
 
@@ -401,7 +393,7 @@ test('emit after', function(a) {
 
     a.plan(2);
 
-    var em = new EventBox();
+    var em = createEventBox();
     var start = Date.now();
 
     em.on('foo', function(x) {
@@ -415,7 +407,7 @@ test('emit after', function(a) {
 
 test('emit every', function(a) {
     
-    var em = new EventBox();
+    var em = createEventBox();
     var last = Date.now();
     var count = 0;
 

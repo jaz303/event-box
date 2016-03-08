@@ -14,9 +14,8 @@ function _remove(ary, item) {
     return false;
 }
 
-function EventBox(validEvents) {
-    this._validEvents = validEvents || null;
-    this._eventHandlers = {};
+function EventBox() {
+    this._eventHandlers = null;
 }
 
 EventBox.prototype.bind = function(obj, events) {
@@ -198,10 +197,6 @@ EventBox.prototype.emitEvery = function(interval, ev) {
 // Internal
 
 EventBox.prototype._on = function(ev, userData, cb, ctx) {
-
-    if (this._validEvents && this._validEvents.indexOf(ev) < 0) {
-        throw new Error("no such event: " + ev);
-    }
     
     var hnds    = this._eventHandlers || (this._eventHandlers = {}),
         lst     = hnds[ev] || (hnds[ev] = []);
